@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 alphabet = {}
 
 alphabet["0"] = """\0
@@ -398,18 +400,19 @@ for character in alphabet:
 
 def printASCII(str):
     str = str.lower()
-    printList = []
-    printStr = ""
-    numOfRows = len(alphabet["1"])  # number of rows based on the character '1'
-    for x in range(numOfRows + 1):
-        printList.append([])
+    str_out = []
     for character in str:
         if character in alphabet:
-            row = 0
-            for line in alphabet[character]:
-                printList[row].append(line)
-                row += 1
-    for row in printList[1:-1]:  # slice first and last empty row
-        printStr += "".join(row) + "\n"
-    # return printStr
-    print(printStr, end='')
+            str_out.append(alphabet[character])
+    str_out = list(zip(*str_out))
+    for line in str_out:
+        print( "".join(line))
+
+
+if __name__ == "__main__":
+    printASCII(" test ")
+    printASCII("12:34:56")
+    printASCII("!@#-,.?()*&")
+    printASCII(":)")
+
+
