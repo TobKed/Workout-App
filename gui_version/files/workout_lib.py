@@ -25,10 +25,11 @@ class Workout():
         self.structure = structure
 
     def open_workout_file(self, last_dir = True):
-        if last_dir and not utilities.LAST_DIR:
+        if last_dir and utilities.LAST_DIR:
             init_dir = utilities.LAST_DIR
         else:
             init_dir = getcwd()
+        print(init_dir)
         self.filename = filedialog.askopenfilename(initialdir=init_dir, title="Open workout csv file",
                                               filetypes=(("csv file", "*.csv"), ("all files", "*.*")), multiple=False)
         utilities.LAST_DIR = utilities.get_last_dir_from_path(self.filename)
