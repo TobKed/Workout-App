@@ -3,13 +3,14 @@ import csv
 from os import getcwd
 from tkinter import filedialog
 
-import utilities
+import files.utilities
 
 
 class Exercise():
-    def __init__(self, exercise_name = "", rep_time_plan=None):
+    def __init__(self, exercise_name = "", rep_time_plan=[]):
         self.exercise_name = exercise_name
         self.rep_time_plan = self.rep_time_plan_parse(rep_time_plan)
+        # self.rep_time_plan = rep_time_plan
         self.nr_of_sets = self.nr_of_sets()
 
     def nr_of_sets(self):
@@ -17,11 +18,12 @@ class Exercise():
 
     @staticmethod
     def rep_time_plan_parse(raw_list):
-        return list(map(lambda s: s.replace(" ", "").split(","), raw_list))
+        tmp = list(map(lambda s: s.replace(" ", "").split(",") if s else None, raw_list))
+        return [x for x in tmp if x is not None]
 
 
 class Workout():
-    def __init__(self, workout_name="", exercises=None, break_exercise=10, break_set=30, structure="circuit"):
+    def __init__(self, workout_name="", exercises=[], break_exercise=10, break_set=30, structure="circuit"):
         self.workout_name = workout_name
         self.exercises = exercises
         self.break_exercise = break_exercise
@@ -29,14 +31,22 @@ class Workout():
         self.structure = structure
 
     def open_workout_file(self, last_dir = True):
-        if last_dir and utilities.LAST_DIR:
-            init_dir = utilities.LAST_DIR
+        if last_dir:
+            files.utilities.get_last_dir()
+            init_dir = files.utilities.LAST_DIR
         else:
             init_dir = getcwd()
         print(init_dir)
         self.filename = filedialog.askopenfilename(initialdir=init_dir, title="Open workout csv file",
-                                              filetypes=(("csv file", "*.csv"), ("all files", "*.*")), multiple=False)
-        utilities.LAST_DIR = utilities.get_last_dir_from_path(self.filename)
+                                                   filetypes=(("csv file", "*.csv"), ("all files", "*.*")),
+                                                   multiple=False)
+        if last_dir:
+            files.utilities.LAST_DIR = files.utilities.save_last_dir(self.filename)
+        if self.filename:
+            try:
+                self.parse_workout_file()
+            except Exception as e:
+                print("Error during parsing csv file:\n\t{}".format(e))
 
     def parse_workout_file(self):
         with open(self.filename) as csvDataFile:
@@ -48,8 +58,3 @@ class Workout():
             for x in range(2): csv_reader.__next__()
             for row in csv_reader:
                 self.exercises.append(Exercise(row[0], row[1:]))
-
-
-
-
-
