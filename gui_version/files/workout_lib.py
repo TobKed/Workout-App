@@ -7,17 +7,21 @@ import utilities
 
 
 class Exercise():
-    def __init__(self, exercise_name = "", rep_time_plan=[]):
+    def __init__(self, exercise_name = "", rep_time_plan=None):
         self.exercise_name = exercise_name
-        self.rep_time_plan = rep_time_plan
+        self.rep_time_plan = self.rep_time_plan_parse(rep_time_plan)
         self.nr_of_sets = self.nr_of_sets()
 
     def nr_of_sets(self):
         return len(self.rep_time_plan)
 
+    @staticmethod
+    def rep_time_plan_parse(raw_list):
+        return list(map(lambda s: s.replace(" ", "").split(","), raw_list))
+
 
 class Workout():
-    def __init__(self, workout_name="", exercises=[], break_exercise=10, break_set=30, structure="circuit"):
+    def __init__(self, workout_name="", exercises=None, break_exercise=10, break_set=30, structure="circuit"):
         self.workout_name = workout_name
         self.exercises = exercises
         self.break_exercise = break_exercise
@@ -43,7 +47,6 @@ class Workout():
             self.break_set = csv_reader.__next__()[1]
             for x in range(2): csv_reader.__next__()
             for row in csv_reader:
-                print(row)
                 self.exercises.append(Exercise(row[0], row[1:]))
 
 
