@@ -3,6 +3,8 @@ import csv
 from os import getcwd
 from tkinter import filedialog
 
+import utilities
+
 
 class Exercise():
     def __init__(self, exercise_name = "", rep_time_plan=[]):
@@ -22,10 +24,14 @@ class Workout():
         self.break_set = break_set
         self.structure = structure
 
-    def open_workout_file(self):
-        self.filename = filedialog.askopenfilename(initialdir=getcwd(), title="Open workout csv file",
-                                                        filetypes=(("csv file", "*.csv"), ("all files", "*.*")),
-                                                        multiple=False)
+    def open_workout_file(self, last_dir = True):
+        if last_dir and not utilities.LAST_DIR:
+            init_dir = utilities.LAST_DIR
+        else:
+            init_dir = getcwd()
+        self.filename = filedialog.askopenfilename(initialdir=init_dir, title="Open workout csv file",
+                                              filetypes=(("csv file", "*.csv"), ("all files", "*.*")), multiple=False)
+        utilities.LAST_DIR = utilities.get_last_dir_from_path(self.filename)
 
     def parse_workout_file(self):
         with open(self.filename) as csvDataFile:
