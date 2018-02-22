@@ -4,9 +4,9 @@ from os import getcwd
 from tkinter import filedialog
 
 
-class Excercise():
-    def __init__(self, workout_name = "", rep_time_plan=[]):
-        self.workout_name = workout_name
+class Exercise():
+    def __init__(self, exercise_name = "", rep_time_plan=[]):
+        self.exercise_name = exercise_name
         self.rep_time_plan = rep_time_plan
         self.nr_of_sets = self.nr_of_sets()
 
@@ -15,14 +15,10 @@ class Excercise():
 
 
 class Workout():
-
-    def __init__(self, name="", plan=None, break_excercise=10, break_set=30, structure="circuit"):
-        self._registry.append(self)
-        self.name = name
-        if plan == None:
-            plan = [["push ups", [[10, 60], [10, 60]]]]
-        self.plan = plan
-        self.break_excercise = break_excercise
+    def __init__(self, workout_name="", exercises=[], break_exercise=10, break_set=30, structure="circuit"):
+        self.workout_name = workout_name
+        self.exercises = exercises
+        self.break_exercise = break_exercise
         self.break_set = break_set
         self.structure = structure
 
@@ -36,11 +32,14 @@ class Workout():
             csv_reader = csv.reader(csvDataFile, delimiter=';')
             self.workout_name = csv_reader.__next__()[1]
             self.structure = csv_reader.__next__()[1]
-            self.break_excercise = csv_reader.__next__()[1]
+            self.break_exercise = csv_reader.__next__()[1]
             self.break_set = csv_reader.__next__()[1]
             for x in range(2): csv_reader.__next__()
             for row in csv_reader:
                 print(row)
+                self.exercises.append(Exercise(row[0], row[1:]))
+
+
 
 
 
