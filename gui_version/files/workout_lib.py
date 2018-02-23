@@ -11,17 +11,14 @@ class Exercise:
         self.exercise_name = exercise_name
         self.rep_time_plan = self.rep_time_plan_parse(rep_time_plan)
         self.nr_of_sets = self.nr_of_sets()
+        self.idx = 0
 
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def __next__(self, ex_nr=0):
         try:
-            if self.idx is not None: pass
-        except:
-            self.idx = 0
-        try:
-            item = self.rep_time_plan[self.idx]
+            item = {"name": self.exercise_name, "repetitions": self.rep_time_plan[self.idx][0], "time": self.rep_time_plan[self.idx][1], "set_nr": self.idx+1, "ex_nr": ex_nr}
             self.idx += 1
         except IndexError:
             self.idx = 0
@@ -41,6 +38,9 @@ class Break_:
     def __init__(self, break_type, break_time=0):
         self.type = break_type
         self.time = break_time
+
+    def get_break(self):
+        return {"name": self.type, "time": self.time}
 
 
 class Workout:
@@ -100,17 +100,20 @@ class Workout:
     def fill_plan(self):
         if self.structure == "classic":
             for ex_obj in self.exercises:
-                for set_counter in range(ex_obj.nr_of_sets-1):
-                    self.plan.extend([ex_obj, self.break_exercise])
-                self.plan.extend([ex_obj, self.break_set])
+                for set_counter in range(ex_obj.nr_of_sets):
+                    self.plan.extend([ex_obj.__next__(ex_nr=self.exercises.index(ex_obj)+1), self.break_exercise.get_break()])
+                del self.plan[-1]
+                self.plan.append(self.break_set.get_break())
             del self.plan[-1]
         elif self.structure == "circuit":
             for set_counter in range(self.max_nr_of_sets):
+                ex_counter = 0
                 for ex_obj in self.exercises:
-                    if self.plan.count(ex_obj) < ex_obj.nr_of_sets:
-                        self.plan.extend([ex_obj, self.break_exercise])
+                    if ex_obj.idx < ex_obj.nr_of_sets:
+                        ex_counter += 1
+                        self.plan.extend([ex_obj.__next__(ex_nr=ex_counter), self.break_exercise.get_break()])
                 del self.plan[-1]
-                self.plan.append(self.break_set)
+                self.plan.append(self.break_set.get_break())
             del self.plan[-1]
 
     def print_test_console_info(self):
@@ -128,27 +131,30 @@ class Workout:
         print(self.break_exercise.type, self.break_exercise.time)
         print(self.break_set.type, self.break_set.time)
 
-        print()
-        print("exercise iterator test")
-        for ex in self.exercises[0]:
-            print(ex)
-
-        print()
-        print("exercise iterator test (exercise sets {}) (range 10):".format(self.exercises[0].nr_of_sets))
-        for test_counter in range(10):
-            try:
-                print(self.exercises[0].exercise_name, self.exercises[0].__next__())
-            except StopIteration:
-                break
+        # print()
+        # print("exercise iterator test")
+        # for ex in self.exercises[0]:
+        #     print(ex)
+        #
+        # print()
+        # print("exercise iterator test (exercise sets {}) (range 10):".format(self.exercises[0].nr_of_sets))
+        # for test_counter in range(10):
+        #     try:
+        #         print(self.exercises[0].exercise_name, self.exercises[0].__next__())
+        #     except StopIteration:
+        #         break
 
         print()
         print("plan")
         print(self.plan)
+        # for plan_obj in self.plan:
+        #     if isinstance(plan_obj, Break_):
+        #         print(plan_obj.type)
+        #     if isinstance(plan_obj, Exercise):
+        #         print(plan_obj.exercise_name)
+
         for plan_obj in self.plan:
-            if isinstance(plan_obj, Break_):
-                print(plan_obj.type)
-            if isinstance(plan_obj, Exercise):
-                print(plan_obj.exercise_name)
+            print(plan_obj)
 
 
 
