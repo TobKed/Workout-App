@@ -100,27 +100,23 @@ class Workout:
     def fill_plan(self):
         if self.structure == "classic":
             for ex_obj in self.exercises:
-                for single_ex in range(ex_obj.nr_of_sets-1):
+                for set_counter in range(ex_obj.nr_of_sets-1):
                     self.plan.extend([ex_obj, self.break_exercise])
                 self.plan.extend([ex_obj, self.break_set])
             del self.plan[-1]
         elif self.structure == "circuit":
             for set_counter in range(self.max_nr_of_sets):
                 for ex_obj in self.exercises:
-                    print("ex_obj", ex_obj.exercise_name)
-                    self.plan.extend([ex_obj, self.break_exercise])
+                    if self.plan.count(ex_obj) < ex_obj.nr_of_sets:
+                        self.plan.extend([ex_obj, self.break_exercise])
+                del self.plan[-1]
                 self.plan.append(self.break_set)
-            self.plan = self.plan[::-1]
-            for ex_obj in self.exercises:
-                while self.plan.count(ex_obj) > ex_obj.nr_of_sets:
-                    del self.plan[self.plan.index(ex_obj)]
-            self.plan = self.plan[::-1]
             del self.plan[-1]
 
     def print_test_console_info(self):
         print()
-        print("structure:")
-        print(self.structure)
+        print("structure:", self.structure)
+        print("max_nr_of_sets", self.max_nr_of_sets)
 
         print()
         print("workout exercises:")
