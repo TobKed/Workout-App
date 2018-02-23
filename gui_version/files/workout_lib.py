@@ -6,12 +6,28 @@ from tkinter import filedialog
 import files.utilities
 
 
-class Exercise():
+class Exercise:
     def __init__(self, exercise_name = "", rep_time_plan=[]):
         self.exercise_name = exercise_name
         self.rep_time_plan = self.rep_time_plan_parse(rep_time_plan)
         # self.rep_time_plan = rep_time_plan
         self.nr_of_sets = self.nr_of_sets()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            if self.idx is not None: pass
+        except:
+            self.idx = 0
+        try:
+            item = self.rep_time_plan[self.idx]
+            self.idx += 1
+        except IndexError:
+            self.idx = 0
+            raise StopIteration()
+        return item
 
     def nr_of_sets(self):
         return len(self.rep_time_plan)
@@ -22,7 +38,7 @@ class Exercise():
         return [x for x in tmp if x is not None]
 
 
-class Workout():
+class Workout:
     def __init__(self, workout_name="", exercises=[], break_exercise=10, break_set=30, structure="circuit"):
         self.workout_name = workout_name
         self.exercises = exercises
@@ -58,3 +74,4 @@ class Workout():
             for x in range(2): csv_reader.__next__()
             for row in csv_reader:
                 self.exercises.append(Exercise(row[0], row[1:]))
+

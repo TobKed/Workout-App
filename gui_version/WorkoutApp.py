@@ -10,5 +10,11 @@ def main():
     for i in x.exercises:
         print(i.exercise_name, i.rep_time_plan, i.nr_of_sets)
 
+    for test_counter in range(10):
+        try:
+            print(x.exercises[0].exercise_name, x.exercises[0].__next__())
+        except:
+            break
+
 
 if __name__ == "__main__": main()
