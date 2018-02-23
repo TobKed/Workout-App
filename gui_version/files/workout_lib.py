@@ -38,12 +38,18 @@ class Exercise:
         return [x for x in tmp if x is not None]
 
 
+class Break_:
+    def __init__(self, break_type, break_time=0):
+        self.type = break_type
+        self.time = break_time
+
+
 class Workout:
     def __init__(self, workout_name="", exercises=[], break_exercise=10, break_set=30, structure="circuit"):
         self.workout_name = workout_name
         self.exercises = exercises
-        self.break_exercise = break_exercise
-        self.break_set = break_set
+        self.break_exercise = Break_(break_type="short break", break_time=break_exercise)
+        self.break_set = Break_(break_type="long break", break_time=break_exercise)
         self.structure = structure
 
     def open_workout_file(self, last_dir = True):
@@ -69,9 +75,30 @@ class Workout:
             csv_reader = csv.reader(csvDataFile, delimiter=';')
             self.workout_name = csv_reader.__next__()[1]
             self.structure = csv_reader.__next__()[1]
-            self.break_exercise = csv_reader.__next__()[1]
-            self.break_set = csv_reader.__next__()[1]
+            break_exercise = csv_reader.__next__()
+            self.break_exercise = Break_(break_type=break_exercise[0], break_time=break_exercise[1])
+            break_set = csv_reader.__next__()
+            self.break_set = Break_(break_type=break_set[0], break_time=break_set[1])
             for x in range(2): csv_reader.__next__()
             for row in csv_reader:
                 self.exercises.append(Exercise(row[0], row[1:]))
+
+    def print_test_console_info(self):
+        print()
+        print("workout exercises:")
+        for i in self.exercises:
+            print(i.exercise_name, i.rep_time_plan, i.nr_of_sets)
+
+        print()
+        print("workout breaks:")
+        print(self.break_exercise.type, self.break_exercise.time)
+        print(self.break_set.type, self.break_set.time)
+
+        print()
+        print("exercise iterator test (exercise sets {}) (range 10):".format(self.exercises[0].nr_of_sets))
+        for test_counter in range(10):
+            try:
+                print(self.exercises[0].exercise_name, self.exercises[0].__next__())
+            except StopIteration:
+                break
 
