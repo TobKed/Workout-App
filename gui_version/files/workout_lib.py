@@ -16,9 +16,14 @@ class Exercise:
     def __iter__(self):
         return self
 
-    def __next__(self, ex_nr=0):
+    def __next__(self, ex_nr=0, nr_of_exs=1):
         try:
-            item = {"name": self.exercise_name, "repetitions": self.rep_time_plan[self.idx][0], "time": self.rep_time_plan[self.idx][1], "set_nr": self.idx+1, "ex_nr": ex_nr}
+            item = {"name": self.exercise_name, "repetitions": self.rep_time_plan[self.idx][0],
+                    "time": self.rep_time_plan[self.idx][1],
+                    "set_nr": self.idx+1,
+                    "nr_of_sets": self.nr_of_sets,
+                    "ex_nr": ex_nr,
+                    "nr_of_exs": nr_of_exs}
             self.idx += 1
         except IndexError:
             self.idx = 0
@@ -51,6 +56,7 @@ class Workout:
         self.break_set = Break_(break_type="long break", break_time=break_set)
         self.structure = structure
         self.plan = []
+        self.plan_idx = 0
         self.filename = ""
         self.max_nr_of_sets = 0
 
@@ -98,10 +104,12 @@ class Workout:
         pass
 
     def fill_plan(self):
+        nr_of_exs = len(self.exercises)
         if self.structure == "classic":
             for ex_obj in self.exercises:
                 for set_counter in range(ex_obj.nr_of_sets):
-                    self.plan.extend([ex_obj.__next__(ex_nr=self.exercises.index(ex_obj)+1), self.break_exercise.get_break()])
+                    self.plan.extend([ex_obj.__next__(ex_nr=self.exercises.index(ex_obj)+1, nr_of_exs=nr_of_exs),
+                                      self.break_exercise.get_break()])
                 del self.plan[-1]
                 self.plan.append(self.break_set.get_break())
             del self.plan[-1]
@@ -111,10 +119,20 @@ class Workout:
                 for ex_obj in self.exercises:
                     if ex_obj.idx < ex_obj.nr_of_sets:
                         ex_counter += 1
-                        self.plan.extend([ex_obj.__next__(ex_nr=ex_counter), self.break_exercise.get_break()])
+                        self.plan.extend([ex_obj.__next__(ex_nr=ex_counter, nr_of_exs=nr_of_exs),
+                                          self.break_exercise.get_break()])
                 del self.plan[-1]
                 self.plan.append(self.break_set.get_break())
             del self.plan[-1]
+
+    def next_plan_item(self, event):
+        print('keysym: {}'.format(event.keysym))
+        if self.plan_idx < len(self.plan):
+            print(self.plan[self.plan_idx])
+            self.plan_idx += 1
+        else:
+            print("end of workout")
+            self.plan_idx = 0
 
     def print_test_console_info(self):
         print()
