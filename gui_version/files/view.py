@@ -22,8 +22,9 @@ class Timer:
         self.canvas.pack()
         self.canvas.config(width=self.initial_size, height=self.initial_size, background="black", highlightthickness=0)
 
-        self.arc = self.canvas.create_arc(self.dimensions.get("timer_ring_margin"), self.dimensions.get("timer_ring_margin"), 290, 290)
-        self.canvas.itemconfigure(self.arc, start = 90, extent=270, fill = "red4", width = 0)
+        self.arc = self.canvas.create_arc(self.ring_margin, self.ring_margin,
+                                          self.canvas_size-self.ring_margin, self.canvas_size-self.ring_margin)
+        self.canvas.itemconfigure(self.arc, start = 90, extent=270, fill="red4", width=0)
 
         self.oval = self.canvas.create_oval(30, 30, 270, 270, fill="black")
         self.center_text = self.canvas.create_text(150, 150, text="center_text", font = ("Verdanaaaa", 30, "bold"), fill="white")
@@ -32,7 +33,10 @@ class Timer:
 
     @property
     def canvas_size(self):
-        return min(self.master.winfo_height(), self.master.winfo_width())
+        if getattr(self, "master", None) is not None:
+            return min(self.master.winfo_height(), self.master.winfo_width())
+        else:
+            return self.initial_size
 
     @property
     def ring_margin(self):
@@ -43,16 +47,10 @@ class Timer:
         self.__ring_margin = self.calc_dim(x)
 
     def calc_dim(self, x):
-            try:
-                return x/self.canvas_size
-            except AttributeError:
-                return x/self.initial_size
+        return x/self.canvas_size
 
     def get_dim(self, x):
-            try:
-                return int(x*self.canvas_size)
-            except AttributeError:
-                return int(x*self.initial_size)
+        return int(x*self.canvas_size)
 
     def scale_timer(self):
         print("test_variable:", self.ring_margin)
@@ -61,7 +59,8 @@ class Timer:
         self.canvas.itemconfigure(self.text_action, font=("Courier", int(self.canvas_size*0.05), "bold"))
         self.canvas.itemconfigure(self.text_shut_time, font=("Courier", int(self.canvas_size*0.05)))
 
-        self.canvas.coords(self.arc, self.ring_margin, self.ring_margin, self.canvas_size-self.ring_margin, self.canvas_size-self.ring_margin)
+        self.canvas.coords(self.arc, self.ring_margin, self.ring_margin,
+                           self.canvas_size-self.ring_margin, self.canvas_size-self.ring_margin)
 
         self.canvas.coords(self.oval, self.canvas_size*0.1, self.canvas_size*.1, self.canvas_size-(self.canvas_size*0.1), self.canvas_size-(self.canvas_size*0.1))
         self.canvas.coords(self.center_text, self.canvas_size * 0.5, self.canvas_size * 0.5)
