@@ -11,19 +11,24 @@ class WorkoutApp:
         self.root = Tk()
         self.model = Workout()
         self.view = Timer(self.root)
-        self.root.bind('<space>', self.get_item)
+        self.root.bind('<space>', self.get_next_ex)
         self.root.bind('<Configure>', self.scale_window)
 
     def run(self):
-        self.root.title("Tkinter MVC example")
-        self.root.deiconify()
+        self.root.title("WorkoutApp")
+        self.root.withdraw()
         remember_last_dir = settings_default.settings.get("remember_last_directory", False)
-        self.model.open_workout_file(last_dir=remember_last_dir)
-        self.model.print_test_console_info()
-        self.root.mainloop()
+        if self.model.open_workout_file(last_dir=remember_last_dir):
+            self.root.deiconify()
+            self.root.focus_force()
+            self.model.print_test_console_info()
+            self.root.mainloop()
+        else:
+            self.root.destroy
 
-    def get_item(self, e):
-        self.model.next_plan_item(e)
+    def get_next_ex(self, e):
+        current_ex, next_ex = self.model.next_plan_item(e)
+        self.view.update_ex(current_ex, next_ex)
 
     def scale_window(self, e):
         self.view.scale_timer()

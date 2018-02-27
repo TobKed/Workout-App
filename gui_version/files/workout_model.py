@@ -75,6 +75,7 @@ class Workout:
         if self.filename:
             try:
                 self.parse_workout_file()
+                return True
             except Exception as e:
                 print("Error during parsing csv file:\n\t{}".format(e))
 
@@ -126,13 +127,17 @@ class Workout:
             del self.plan[-1]
 
     def next_plan_item(self, event):
-        print('keysym: {}'.format(event.keysym))
+        print('keysym: {}, plan_idx: {}'.format(event.keysym, self.plan_idx))
         if self.plan_idx < len(self.plan):
-            print(self.plan[self.plan_idx])
             self.plan_idx += 1
+            if self.plan_idx-1 < len(self.plan)-1:
+                return self.plan[self.plan_idx-1], self.plan[self.plan_idx]
+            else:
+                return self.plan[self.plan_idx-1], {"name": "END"}
         else:
-            print("end of workout")
             self.plan_idx = 0
+            return {'ex_nr':-1}, {}
+
 
     def print_test_console_info(self):
         print()
