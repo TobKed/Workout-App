@@ -1,7 +1,5 @@
 from tkinter import *
 from tkinter.ttk import *
-from datetime import datetime
-from datetime import timedelta
 
 
 class Timer:
@@ -222,7 +220,7 @@ class Timer:
         self.canvas.coords(self.text_minus_1, *self.text_minus_1_coords)
         self.canvas.coords(self.text_minus_2, *self.text_minus_2_coords)
 
-    def update_ex(self, current_ex, next_ex):
+    def update_ex(self, current_ex={}, next_ex={}, ring_angle=360):
         current_ex_name = current_ex.get("name", "")
         current_ex_time = current_ex.get("time", "")
         current_ex_repetitions = current_ex.get("repetitions", "")
@@ -239,19 +237,29 @@ class Timer:
         next_ex_set_nr = next_ex.get("set_nr", "")
         next_ex_nr_of_sets = next_ex.get("nr_of_sets", "")
 
-
-        self.canvas.itemconfigure(self.central_text, text=current_ex_time)
+        self.canvas.itemconfigure(self.central_text, text=self.time_to_str(current_ex_time))
         self.canvas.itemconfigure(self.text_plus_1, text=current_ex_name)
         self.canvas.itemconfigure(self.text_plus_2, text=current_ex_repetitions)
         if current_ex_name:
-            self.canvas.itemconfigure(self.text_minus_1, text="next: \n" + next_ex_name)
+            self.canvas.itemconfigure(self.text_minus_1, text="{}\n{}".format("next", next_ex_name))
         else:
             self.canvas.itemconfigure(self.text_minus_1, text="")
         if current_ex_nr is -1:
             self.canvas.itemconfigure(self.text_minus_2, text="")
         elif current_ex_nr:
-            self.canvas.itemconfigure(self.text_minus_2, text="ex {} of {}\n set {} of {}".format(current_ex_nr,
-                                                                                              current_ex_nr_of_exs,
-                                                                                              current_ex_set_nr,
-                                                                                              current_ex_nr_of_sets))
-        print(current_ex, next_ex)
+            self.canvas.itemconfigure(self.text_minus_2, text="ex {} of {}\nset {} of {}".format(current_ex_nr,
+                                                                                                  current_ex_nr_of_exs,
+                                                                                                  current_ex_set_nr,
+                                                                                                  current_ex_nr_of_sets))
+
+        self.canvas.itemconfigure(self.ring_arc, extent=ring_angle)
+
+    @staticmethod
+    def time_to_str(sec):
+        sec = int(sec)
+        minutes = (sec%(60*60))//60
+        seconds = sec%60
+        if minutes:
+            return "{: 2d}:{:02d}".format(minutes, seconds)
+        else:
+            return "{: 2d}".format(seconds)

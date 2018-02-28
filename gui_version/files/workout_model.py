@@ -126,8 +126,7 @@ class Workout:
                 self.plan.append(self.break_set.get_break())
             del self.plan[-1]
 
-    def next_plan_item(self, event):
-        print('keysym: {}, plan_idx: {}'.format(event.keysym, self.plan_idx))
+    def next_plan_item(self):
         if self.plan_idx < len(self.plan):
             self.plan_idx += 1
             if self.plan_idx-1 < len(self.plan)-1:
