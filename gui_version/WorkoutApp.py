@@ -26,7 +26,12 @@ class WorkoutApp:
             self.model.print_test_console_info()
             self.root.mainloop()
         else:
-            self.root.destroy
+            self._quit()
+
+    def _quit(self):
+        self.root.quit()
+        self.root.destroy()
+        exit()
 
     def get_next_ex(self, e):
         self.current_ex, self.next_ex = self.model.next_plan_item()

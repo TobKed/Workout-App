@@ -51,10 +51,11 @@ class Break_:
 class Workout:
     def __init__(self, workout_name="", exercises=[], break_exercise=10, break_set=30, structure="circuit"):
         self.workout_name = workout_name
-        self.exercises = exercises
+        self.break_start = Break_(break_type="get ready!", break_time=10)
         self.break_exercise = Break_(break_type="short break", break_time=break_exercise)
         self.break_set = Break_(break_type="long break", break_time=break_set)
         self.structure = structure
+        self.exercises = exercises
         self.plan = []
         self.plan_idx = 0
         self.filename = ""
@@ -105,6 +106,8 @@ class Workout:
         pass
 
     def fill_plan(self):
+        self.plan.append(self.break_start.get_break())
+        self.plan[0].update({"ex_nr":-1})
         nr_of_exs = len(self.exercises)
         if self.structure == "classic":
             for ex_obj in self.exercises:
@@ -148,10 +151,10 @@ class Workout:
         for i in self.exercises:
             print(i.exercise_name, i.rep_time_plan, i.nr_of_sets)
 
-        print()
-        print("workout breaks:")
-        print(self.break_exercise.type, self.break_exercise.time)
-        print(self.break_set.type, self.break_set.time)
+        # print()
+        # print("workout breaks:")
+        # print(self.break_exercise.type, self.break_exercise.time)
+        # print(self.break_set.type, self.break_set.time)
 
         # print()
         # print("exercise iterator test")
@@ -175,8 +178,13 @@ class Workout:
         #     if isinstance(plan_obj, Exercise):
         #         print(plan_obj.exercise_name)
 
-        for plan_obj in self.plan:
-            print(plan_obj)
+        # for plan_obj in self.plan:
+        #     print(plan_obj)
+
+        # print()
+        # print("self/exercises:")
+        # for i in self.exercises:
+        #     print(i.exercise_name)
 
 
 

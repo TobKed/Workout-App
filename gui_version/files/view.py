@@ -54,31 +54,31 @@ class Timer:
         self.ring_inner_oval = self.canvas.create_oval(*self.ring_inner_coords, fill=self.bgcolor)
 
         # text creation
-        self.central_text = self.canvas.create_text(*self.central_text_coords, text="central_text",
+        self.central_text = self.canvas.create_text(*self.central_text_coords, text="time",
                                                     font=(self.central_text_font.get("font"),
                                                           self.central_text_size,
                                                           self.central_text_font.get("style")),
                                                     fill=self.central_text_color)
 
-        self.text_plus_1 = self.canvas.create_text(*self.text_plus_1_coords, text="text_plus_1",
+        self.text_plus_1 = self.canvas.create_text(*self.text_plus_1_coords, text="exercise name",
                                                    font=(self.text_plus_1_font.get("font"),
                                                           self.text_plus_1_size,
                                                           self.text_plus_1_font.get("style")),
                                                    fill=self.text_plus_1_color)
 
-        self.text_plus_2 = self.canvas.create_text(*self.text_plus_2_coords, text="text_plus_2",
+        self.text_plus_2 = self.canvas.create_text(*self.text_plus_2_coords, text="repetitions",
                                                    font=(self.text_plus_2_font.get("font"),
                                                           self.text_plus_2_size,
                                                           self.text_plus_2_font.get("style")),
                                                    fill=self.text_plus_2_color)
 
-        self.text_minus_1 = self.canvas.create_text(*self.text_minus_1_coords, text="text_minus_1",
+        self.text_minus_1 = self.canvas.create_text(*self.text_minus_1_coords, text="next\nexercise",
                                                     font=(self.text_minus_1_font.get("font"),
                                                           self.text_minus_1_size,
                                                           self.text_minus_1_font.get("style")),
                                                     fill=self.text_minus_1_color)
 
-        self.text_minus_2 = self.canvas.create_text(*self.text_minus_2_coords, text="text_minus_2",
+        self.text_minus_2 = self.canvas.create_text(*self.text_minus_2_coords, text="press pause to start",
                                                     font=(self.text_minus_2_font.get("font"),
                                                           self.text_minus_2_size,
                                                           self.text_minus_2_font.get("style")),
@@ -245,7 +245,7 @@ class Timer:
         else:
             self.canvas.itemconfigure(self.text_minus_1, text="")
         if current_ex_nr is -1:
-            self.canvas.itemconfigure(self.text_minus_2, text="")
+            self.canvas.itemconfigure(self.text_minus_2, text="pause to skip")
         elif current_ex_nr:
             self.canvas.itemconfigure(self.text_minus_2, text="ex {} of {}\nset {} of {}".format(current_ex_nr,
                                                                                                   current_ex_nr_of_exs,
