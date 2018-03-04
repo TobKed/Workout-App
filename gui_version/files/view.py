@@ -3,7 +3,7 @@ from tkinter.ttk import *
 
 
 class Timer:
-    def __init__(self, master):
+    def __init__(self, master, **kwargs):
         # general properties
         self.bgcolor = "black"
 
@@ -16,26 +16,31 @@ class Timer:
         # text properties
         self.central_text_size = 30
         self.central_text_color = "white"
-        self.central_text_font = {"font": "Helvetica", "style": "normal"}
+        self.central_text_family = "Helvetica"
+        self.central_text_style = "normal"
 
         self.text_plus_1_size = 15
         self.text_plus_1_color = "white"
-        self.text_plus_1_font = {"font": "Helvetica", "style": "normal"}
+        self.text_plus_1_family = "Helvetica"
+        self.text_plus_1_style = "normal"
         self.text_plus_1_position = 0.7
 
         self.text_plus_2_size = 15
         self.text_plus_2_color = "white"
-        self.text_plus_2_font = {"font": "Helvetica", "style": "bold"}
+        self.text_plus_2_family = "Helvetica"
+        self.text_plus_2_style = "bold"
         self.text_plus_2_position = 0.8
 
         self.text_minus_1_size = 10
         self.text_minus_1_color = "white"
-        self.text_minus_1_font = {"font": "Helvetica", "style": "normal"}
+        self.text_minus_1_family = "Helvetica"
+        self.text_minus_1_style = "normal"
         self.text_minus_1_position = 0.37
 
         self.text_minus_2_size = 10
         self.text_minus_2_color = "white"
-        self.text_minus_2_font = {"font": "Helvetica", "style": "normal"}
+        self.text_minus_2_family = "Helvetica"
+        self.text_minus_2_style = "normal"
         self.text_minus_2_position = 0.2
 
         # master
@@ -55,33 +60,33 @@ class Timer:
 
         # text creation
         self.central_text = self.canvas.create_text(*self.central_text_coords, text="time",
-                                                    font=(self.central_text_font.get("font"),
+                                                    font=(self.central_text_family,
                                                           self.central_text_size,
-                                                          self.central_text_font.get("style")),
+                                                          self.central_text_style),
                                                     fill=self.central_text_color)
 
         self.text_plus_1 = self.canvas.create_text(*self.text_plus_1_coords, text="exercise name",
-                                                   font=(self.text_plus_1_font.get("font"),
+                                                   font=(self.text_plus_1_family,
                                                           self.text_plus_1_size,
-                                                          self.text_plus_1_font.get("style")),
+                                                          self.text_plus_1_style),
                                                    fill=self.text_plus_1_color)
 
         self.text_plus_2 = self.canvas.create_text(*self.text_plus_2_coords, text="repetitions",
-                                                   font=(self.text_plus_2_font.get("font"),
+                                                   font=(self.text_plus_2_family,
                                                           self.text_plus_2_size,
-                                                          self.text_plus_2_font.get("style")),
+                                                          self.text_plus_2_style),
                                                    fill=self.text_plus_2_color)
 
         self.text_minus_1 = self.canvas.create_text(*self.text_minus_1_coords, text="next\nexercise",
-                                                    font=(self.text_minus_1_font.get("font"),
+                                                    font=(self.text_minus_1_family,
                                                           self.text_minus_1_size,
-                                                          self.text_minus_1_font.get("style")),
+                                                          self.text_minus_1_style),
                                                     fill=self.text_minus_1_color)
 
         self.text_minus_2 = self.canvas.create_text(*self.text_minus_2_coords, text="press pause to start",
-                                                    font=(self.text_minus_2_font.get("font"),
+                                                    font=(self.text_minus_2_family,
                                                           self.text_minus_2_size,
-                                                          self.text_minus_2_font.get("style")),
+                                                          self.text_minus_2_style),
                                                     fill=self.text_minus_2_color)
 
     def calc_dim(self, x):
@@ -192,25 +197,26 @@ class Timer:
 
     def scale_timer(self):
         self.canvas.config(width=self.canvas_size, height=self.canvas_size)
-        self.canvas.itemconfigure(self.central_text, font=(self.central_text_font.get("font"),
+        self.canvas.itemconfigure(self.central_text, font=(self.central_text_family,
                                                            self.central_text_size,
-                                                           self.central_text_font.get("style")))
+                                                           self.central_text_style),
+                                  fill=self.central_text_color)
 
-        self.canvas.itemconfigure(self.text_plus_1, font=(self.text_plus_1_font.get("font"),
+        self.canvas.itemconfigure(self.text_plus_1, font=(self.text_plus_1_family,
                                                           self.text_plus_1_size,
-                                                          self.text_plus_1_font.get("style")))
+                                                          self.text_plus_1_style))
 
-        self.canvas.itemconfigure(self.text_plus_2, font=(self.text_plus_2_font.get("font"),
+        self.canvas.itemconfigure(self.text_plus_2, font=(self.text_plus_2_family,
                                                           self.text_plus_2_size,
-                                                          self.text_plus_2_font.get("style")))
+                                                          self.text_plus_2_style))
 
-        self.canvas.itemconfigure(self.text_minus_1, font=(self.text_minus_1_font.get("font"),
+        self.canvas.itemconfigure(self.text_minus_1, font=(self.text_minus_1_family,
                                                            self.text_minus_1_size,
-                                                           self.text_minus_1_font.get("style")))
+                                                           self.text_minus_1_style))
 
-        self.canvas.itemconfigure(self.text_minus_2, font=(self.text_minus_2_font.get("font"),
+        self.canvas.itemconfigure(self.text_minus_2, font=(self.text_minus_2_family,
                                                            self.text_minus_2_size,
-                                                           self.text_minus_2_font.get("style")))
+                                                           self.text_minus_2_style))
 
         self.canvas.coords(self.ring_arc, *self.ring_outter_coords)
         self.canvas.coords(self.ring_inner_oval, *self.ring_inner_coords)
@@ -263,3 +269,7 @@ class Timer:
             return "{: 2d}:{:02d}".format(minutes, seconds)
         else:
             return "{: 2d}".format(seconds)
+
+    #TODO finish apply_settings
+    def apply_settings(self, settings):
+        pass
