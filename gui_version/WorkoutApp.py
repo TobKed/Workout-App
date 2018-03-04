@@ -22,7 +22,7 @@ class WorkoutApp:
     def run(self):
         self.root.title("WorkoutApp")
         self.root.withdraw()
-        if self.model.open_workout_file(last_dir=set.remember_last_directory):
+        if self.model.open_workout_file(last_dir=sets.remember_last_directory):
             self.root.deiconify()
             self.root.focus_force()
             self.model.print_test_console_info()
@@ -68,5 +68,5 @@ class WorkoutApp:
 
 if __name__ == '__main__':
     c = WorkoutApp()
-    set = Settings(SETTINGS_DEFAULT)
+    sets = Settings(SETTINGS_DEFAULT)
     c.run()
