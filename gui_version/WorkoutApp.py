@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
-import settings_default
+from files.settings_lib import *
 from files.view import *
 from files.workout_model import *
 from tkinter import *
 from datetime import datetime
 from datetime import timedelta
+
+SETTINGS_DEFAULT = "settings_default.ini"
+SETTINGS_USER = "settings.ini"
 
 
 class WorkoutApp:
@@ -19,8 +22,7 @@ class WorkoutApp:
     def run(self):
         self.root.title("WorkoutApp")
         self.root.withdraw()
-        remember_last_dir = settings_default.settings.get("remember_last_directory", False)
-        if self.model.open_workout_file(last_dir=remember_last_dir):
+        if self.model.open_workout_file(last_dir=set.remember_last_directory):
             self.root.deiconify()
             self.root.focus_force()
             self.model.print_test_console_info()
@@ -66,4 +68,5 @@ class WorkoutApp:
 
 if __name__ == '__main__':
     c = WorkoutApp()
+    set = Settings(SETTINGS_DEFAULT)
     c.run()
