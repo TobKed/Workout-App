@@ -61,7 +61,7 @@ class Workout:
         self.filename = ""
         self.max_nr_of_sets = 0
 
-    def open_workout_file(self, last_dir = True):
+    def open_workout_file(self, last_dir=True):
         if last_dir:
             files.utilities.get_last_dir()
             init_dir = files.utilities.LAST_DIR

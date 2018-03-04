@@ -12,17 +12,18 @@ SETTINGS_USER = "settings.ini"
 
 
 class WorkoutApp:
-    def __init__(self):
+    def __init__(self, initial_settings):
         self.root = Tk()
         self.model = Workout()
-        self.view = Timer(self.root)
+        self.view = Timer(self.root, inital_settings=initial_settings.timer_window_settings)
+        self.settings_ = Settings(SETTINGS_USER)
         self.root.bind('<space>', self.get_next_ex)
         self.root.bind('<Configure>', self.scale_window)
 
     def run(self):
         self.root.title("WorkoutApp")
         self.root.withdraw()
-        if self.model.open_workout_file(last_dir=sets.remember_last_directory):
+        if self.model.open_workout_file(last_dir=self.settings_.remember_last_directory):
             self.root.deiconify()
             self.root.focus_force()
             self.model.print_test_console_info()
@@ -40,7 +41,8 @@ class WorkoutApp:
         self.start_countdown()
 
     def scale_window(self, e):
-        self.view.scale_timer()
+        settings_ = Settings(SETTINGS_USER)
+        self.view.scale_timer(settings_.timer_window_settings)
 
     def start_countdown(self):
         current_ex_time = int(self.current_ex.get("time", 0))
@@ -67,6 +69,6 @@ class WorkoutApp:
 
 
 if __name__ == '__main__':
-    c = WorkoutApp()
-    sets = Settings(SETTINGS_DEFAULT)
+    sets = Settings(SETTINGS_USER)
+    c = WorkoutApp(initial_settings=sets)
     c.run()

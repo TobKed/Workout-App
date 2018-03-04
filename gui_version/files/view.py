@@ -3,7 +3,7 @@ from tkinter.ttk import *
 
 
 class Timer:
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, inital_settings):
         # general properties
         self.bgcolor = "black"
 
@@ -42,6 +42,9 @@ class Timer:
         self.text_minus_2_family = "Helvetica"
         self.text_minus_2_style = "normal"
         self.text_minus_2_position = 0.2
+
+        # set text settings according to settings file
+        self.update_timer_settings(inital_settings)
 
         # master
         self.master = master
@@ -89,8 +92,25 @@ class Timer:
                                                           self.text_minus_2_style),
                                                     fill=self.text_minus_2_color)
 
+
+    @staticmethod
+    def time_to_str(sec):
+        sec = int(sec)
+        minutes = (sec%(60*60))//60
+        seconds = sec%60
+        if minutes:
+            return "{: 2d}:{:02d}".format(minutes, seconds)
+        else:
+            return "{: 2d}".format(seconds)
+
+    #TODO finish apply_settings
+    def apply_settings(self, settings):
+        pass
+
+
     def calc_dim(self, x):
-        return x/self.canvas_size
+        # return x/self.canvas_size
+        return x/self.initial_size
 
     def get_dim(self, x):
         return int(x*self.canvas_size)
@@ -129,7 +149,9 @@ class Timer:
                 self.canvas_size - self.ring_width - self.ring_margin,
                 self.canvas_size - self.ring_width - self.ring_margin)
 
-    #   TEXT DECORATORS START    #
+    # ======================
+    # text decorators start
+    # ======================
     @property
     def central_text_size(self):
         return self.get_dim(self.__central_text_size)
@@ -193,9 +215,14 @@ class Timer:
     @property
     def text_minus_2_coords(self):
         return self.canvas_size//2, int(self.canvas_size * (1-self.text_minus_2_position))
-    #    TEXT DECORATORS END     #
+    # ======================
+    # text decorators end
+    # ======================
 
-    def scale_timer(self):
+
+    def scale_timer(self, settings):
+        self.update_timer_settings(settings)
+
         self.canvas.config(width=self.canvas_size, height=self.canvas_size)
         self.canvas.itemconfigure(self.central_text, font=(self.central_text_family,
                                                            self.central_text_size,
@@ -204,19 +231,23 @@ class Timer:
 
         self.canvas.itemconfigure(self.text_plus_1, font=(self.text_plus_1_family,
                                                           self.text_plus_1_size,
-                                                          self.text_plus_1_style))
+                                                          self.text_plus_1_style),
+                                  fill=self.text_plus_1_color)
 
         self.canvas.itemconfigure(self.text_plus_2, font=(self.text_plus_2_family,
                                                           self.text_plus_2_size,
-                                                          self.text_plus_2_style))
+                                                          self.text_plus_2_style),
+                                  fill=self.text_plus_2_color)
 
         self.canvas.itemconfigure(self.text_minus_1, font=(self.text_minus_1_family,
                                                            self.text_minus_1_size,
-                                                           self.text_minus_1_style))
+                                                           self.text_minus_1_style),
+                                  fill=self.text_minus_1_color)
 
         self.canvas.itemconfigure(self.text_minus_2, font=(self.text_minus_2_family,
                                                            self.text_minus_2_size,
-                                                           self.text_minus_2_style))
+                                                           self.text_minus_2_style),
+                                  fill=self.text_minus_2_color)
 
         self.canvas.coords(self.ring_arc, *self.ring_outter_coords)
         self.canvas.coords(self.ring_inner_oval, *self.ring_inner_coords)
@@ -226,6 +257,12 @@ class Timer:
         self.canvas.coords(self.text_minus_1, *self.text_minus_1_coords)
         self.canvas.coords(self.text_minus_2, *self.text_minus_2_coords)
 
+    def update_timer_settings(self, settings):
+        for key, value in settings.items():
+            if key.find("text") != -1 and key.find("size") != -1:
+                value = int(value)
+            self.__setattr__(key, value)
+
     def update_ex(self, current_ex={}, next_ex={}, ring_angle=360):
         current_ex_name = current_ex.get("name", "")
         current_ex_time = current_ex.get("time", "")
@@ -234,7 +271,7 @@ class Timer:
         current_ex_nr_of_exs = current_ex.get("nr_of_exs", "")
         current_ex_set_nr = current_ex.get("set_nr", "")
         current_ex_nr_of_sets = current_ex.get("nr_of_sets", "")
-        
+
         next_ex_name = next_ex.get("name", "")
         next_ex_time = next_ex.get("time", "")
         next_ex_repetitions = next_ex.get("repetitions", "")
@@ -259,17 +296,3 @@ class Timer:
                                                                                                   current_ex_nr_of_sets))
 
         self.canvas.itemconfigure(self.ring_arc, extent=ring_angle)
-
-    @staticmethod
-    def time_to_str(sec):
-        sec = int(sec)
-        minutes = (sec%(60*60))//60
-        seconds = sec%60
-        if minutes:
-            return "{: 2d}:{:02d}".format(minutes, seconds)
-        else:
-            return "{: 2d}".format(seconds)
-
-    #TODO finish apply_settings
-    def apply_settings(self, settings):
-        pass
