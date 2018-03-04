@@ -1,8 +1,15 @@
 import configparser
 
 
-class Settings():
+class Borg:
+    _shared_state = {}
+    def __init__(self):
+        self.__dict__ = self._shared_state
+
+
+class Settings(Borg):
     def __init__(self, filename):
+        Borg.__init__(self)
         config_parser = configparser.ConfigParser()
         self.read_conf_file(config_parser, filename)
         self.remember_last_directory = self.str_to_bool(config_parser.get('General', 'remember_last_directory'))
@@ -14,6 +21,9 @@ class Settings():
             except:
                 pass
             self.timer_window_settings.update({key: val})
+
+    def __str__(self):
+        return str(self.__class__) + str(id(self))
 
     @staticmethod
     def str_to_bool(tmp):
