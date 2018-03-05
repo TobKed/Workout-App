@@ -56,10 +56,10 @@ class Timer:
         # canvas
         self.canvas = Canvas(self.master)
         self.canvas.pack()
-        self.canvas.config(width=self.initial_size, height=self.initial_size, background="black", highlightthickness=0)
+        self.canvas.config(width=self.initial_size, height=self.initial_size, background=self.bgcolor, highlightthickness=0)
         self.ring_arc = self.canvas.create_arc(*self.ring_outter_coords)
         self.canvas.itemconfigure(self.ring_arc, start = 90, extent=270, fill=self.ring_color, width=0)
-        self.ring_inner_oval = self.canvas.create_oval(*self.ring_inner_coords, fill=self.bgcolor)
+        self.ring_inner_oval = self.canvas.create_oval(*self.ring_inner_coords, fill=self.bgcolor, outline="")
 
         # text creation
         self.central_text = self.canvas.create_text(*self.central_text_coords, text="time",
@@ -223,6 +223,10 @@ class Timer:
     def scale_timer(self, settings):
         self.update_timer_settings(settings)
 
+        self.master.configure(background=self.bgcolor)
+        self.canvas.config(background=self.bgcolor)
+        self.canvas.itemconfigure(self.ring_inner_oval, fill=self.bgcolor)
+
         self.canvas.config(width=self.canvas_size, height=self.canvas_size)
         self.canvas.itemconfigure(self.central_text, font=(self.central_text_family,
                                                            self.central_text_size,
@@ -273,12 +277,6 @@ class Timer:
         current_ex_nr_of_sets = current_ex.get("nr_of_sets", "")
 
         next_ex_name = next_ex.get("name", "")
-        next_ex_time = next_ex.get("time", "")
-        next_ex_repetitions = next_ex.get("repetitions", "")
-        next_ex_nr = next_ex.get("ex_nr", "")
-        next_ex_nr_of_exs = next_ex.get("nr_of_exs", "")
-        next_ex_set_nr = next_ex.get("set_nr", "")
-        next_ex_nr_of_sets = next_ex.get("nr_of_sets", "")
 
         self.canvas.itemconfigure(self.central_text, text=self.time_to_str(current_ex_time))
         self.canvas.itemconfigure(self.text_plus_1, text=current_ex_name)
