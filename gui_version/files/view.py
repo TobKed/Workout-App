@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
-
+from tkinter.colorchooser import *
+import tkinter.font as tkfont
 
 class Timer:
     def __init__(self, master, inital_settings):
@@ -294,3 +295,56 @@ class Timer:
                                                                                                   current_ex_nr_of_sets))
 
         self.canvas.itemconfigure(self.ring_arc, extent=ring_angle)
+
+
+class OptionsWindow():
+    def __init__(self, master, settings_obj):
+        self.opt_win = Toplevel(master)
+        self.win_settings = getattr(settings_obj, 'timer_window_settings', None)
+        # self.opt_win.geometry("{0}x{0}".format(200, 200))
+        self.opt_win.title("Options")
+        self.opt_win.resizable(0, 0)
+
+        # Tab Control / Notebook
+        tabControl = Notebook(self.opt_win)
+        self.tab1 = Frame(tabControl)
+        tabControl.add(self.tab1, text='general')
+        self.tab2 = Frame(tabControl)
+        tabControl.add(self.tab2, text='main window')
+        self.tab3 = Frame(tabControl)
+        tabControl.add(self.tab3, text='central text')
+        self.tab4 = Frame(tabControl)
+        tabControl.add(self.tab4, text='repetitions text')
+        self.tab5 = Frame(tabControl)
+        tabControl.add(self.tab5, text='exercise name text')
+        self.tab6 = Frame(tabControl)
+        tabControl.add(self.tab6, text='next exercise text')
+        self.tab7 = Frame(tabControl)
+        tabControl.add(self.tab7, text='info text')
+        tabControl.pack(expand=1, fill="both")
+
+        texts = ["central_text", "text_plus_1", "text_plus_2", "text_minus_1", "text_minus_2"]
+        text_tabs = tabControl.winfo_children()[2:]
+        for tab in text_tabs:
+            idx = text_tabs.index(tab)
+            label1 = Label(tab, text=texts[idx])
+            label1.pack()
+
+    class FontListbox():
+        def __init__(self, root_frame):
+            fonts = list(tkfont.families())
+            fonts.sort()
+            display = Listbox(root_frame)
+            display.pack(fill=BOTH, expand=YES, side=LEFT)
+            scroll = Scrollbar(root_frame)
+            scroll.pack(side=RIGHT, fill=Y, expand=NO)
+            scroll.configure(command=display.yview)
+            display.configure(yscrollcommand=scroll.set)
+            for item in fonts:
+                display.insert(END, item)
+
+
+def getColor():
+    color = askcolor()
+    print(color[1])
+    return color[1]

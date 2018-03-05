@@ -15,8 +15,9 @@ class WorkoutApp:
     def __init__(self, initial_settings):
         self.root = Tk()
         self.model = Workout()
-        self.view = Timer(self.root, inital_settings=initial_settings.timer_window_settings)
-        self.settings_ = Settings(SETTINGS_USER)
+        self.settings_ = initial_settings
+        self.view = Timer(self.root, inital_settings=self.settings_.timer_window_settings)
+        self.settings_window = OptionsWindow(self.root, self.settings_)
         self.root.bind('<space>', self.get_next_ex)
         self.root.bind('<Configure>', self.scale_window)
 
@@ -27,6 +28,7 @@ class WorkoutApp:
             self.root.deiconify()
             self.root.focus_force()
             self.model.print_test_console_info()
+            self.settings_window.opt_win.lift()
             self.root.mainloop()
         else:
             self._quit()
