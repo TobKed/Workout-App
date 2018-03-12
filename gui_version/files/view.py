@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
+from tkinter import font
 from tkinter.colorchooser import *
 import tkinter.font as tkfont
 
@@ -323,28 +324,60 @@ class OptionsWindow():
         tabControl.add(self.tab7, text='info text')
         tabControl.pack(expand=1, fill="both")
 
+        # control buttons
+        self.control_buttons_frame = Frame(self.opt_win)
+        self.btn_Apply = Button(self.control_buttons_frame, text='Apply')
+        self.btn_Cancel = Button(self.control_buttons_frame, text='Cancel')
+        self.btn_Reset = Button(self.control_buttons_frame, text='Reset')
+        self.btn_Defaults = Button(self.control_buttons_frame, text='Defaults')
+        for tmp in self.control_buttons_frame.winfo_children():
+            tmp.pack(side=LEFT)
+        self.control_buttons_frame.pack(side=RIGHT)
+
+
+
+
         texts = ["central_text", "text_plus_1", "text_plus_2", "text_minus_1", "text_minus_2"]
         text_tabs = tabControl.winfo_children()[2:]
         for tab in text_tabs:
             idx = text_tabs.index(tab)
-            label1 = Label(tab, text=texts[idx])
-            label1.pack()
+            text_name = texts[idx]
+            opt_frame = Frame(tab)
+            opt_frame.config(height=100)
+            opt_frame.pack(expand=1, fill="both", padx=10, pady=10)
+            font_frame = Frame(opt_frame)
+            lbl_font = Label(opt_frame, text="Font:").grid(column=0, row=0, sticky='E')
+            ent_font = Combobox(opt_frame, values=font.families()).grid(column=1, row=0, columnspan=2, sticky='EW')
+            lbl_size = Label(opt_frame, text="Size:").grid(column=0, row=1, sticky='E')
+            ent_size = Combobox(opt_frame, values=tuple(range(0, 41))).grid(column=1, row=1, columnspan=2, sticky='EW')
+            lbl_style = Label(opt_frame, text="Style:").grid(column=0, row=2, sticky='E')
+            ent_style = Combobox(opt_frame, values = ("normal", "bold", "roman", "italic",
+                                                     "underline", "overstrike")).grid(column=1, row=2, columnspan=2, sticky='EW')
+            lbl_color = Label(opt_frame, text="Color:").grid(column=0, row=3, sticky='E')
+            ent_color = Button(opt_frame, text="Color chooser", command=self.getColor).grid(column=1, row=3, columnspan=2, sticky='EW')
 
-    class FontListbox():
-        def __init__(self, root_frame):
-            fonts = list(tkfont.families())
-            fonts.sort()
-            display = Listbox(root_frame)
-            display.pack(fill=BOTH, expand=YES, side=LEFT)
-            scroll = Scrollbar(root_frame)
-            scroll.pack(side=RIGHT, fill=Y, expand=NO)
-            scroll.configure(command=display.yview)
-            display.configure(yscrollcommand=scroll.set)
-            for item in fonts:
-                display.insert(END, item)
+            lbl_pos = Label(opt_frame, text="Position:").grid(column=3, row=0, )
+            ent_pos = Scale(opt_frame, orient=VERTICAL).grid(column=3, row=1, rowspan=4)
+            opt_frame.columnconfigure(3, minsize=100)
+
+            # Add some space around each label
+            for child in opt_frame.winfo_children():
+                child.grid_configure(padx=4, pady=2)
+
+            # text_plus_1_size: 15
+            # text_plus_1_color: white
+            # text_plus_1_family: Helvetica
+            # text_plus_1_style: normal
+            # text_plus_1_position: 0.7
 
 
-def getColor():
-    color = askcolor()
-    print(color[1])
-    return color[1]
+            # label1 = Label(tab, text=tab.__dir__())
+            # label1.pack()
+
+    def getColor(self):
+        color = askcolor(parent=self.opt_win)
+        print(color[1])
+        return color[1]
+
+
+
