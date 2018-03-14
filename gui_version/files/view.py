@@ -299,8 +299,10 @@ class Timer:
 
 
 class OptionsWindow():
-    def __init__(self, master, settings_obj):
+    def __init__(self, app, master, settings_obj):
+        self.app = app
         self.opt_win = Toplevel(master)
+        self.master = master
         self.win_settings = getattr(settings_obj, 'timer_window_settings', None)
         # self.opt_win.geometry("{0}x{0}".format(200, 200))
         self.opt_win.title("Options")
@@ -326,10 +328,10 @@ class OptionsWindow():
 
         # control buttons
         self.control_buttons_frame = Frame(self.opt_win)
-        self.btn_Apply = Button(self.control_buttons_frame, text='Apply')
+        self.btn_Apply = Button(self.control_buttons_frame, text='Apply', command=self.save_and_apply_settings)
         self.btn_Cancel = Button(self.control_buttons_frame, text='Cancel')
         self.btn_Reset = Button(self.control_buttons_frame, text='Reset')
-        self.btn_Defaults = Button(self.control_buttons_frame, text='Defaults')
+        self.btn_Defaults = Button(self.control_buttons_frame, text='Defaults', command=self.get_defaults)
         for tmp in self.control_buttons_frame.winfo_children():
             tmp.pack(side=LEFT)
         self.control_buttons_frame.pack(side=RIGHT)
@@ -337,27 +339,44 @@ class OptionsWindow():
 
 
 
-        texts = ["central_text", "text_plus_1", "text_plus_2", "text_minus_1", "text_minus_2"]
-        text_tabs = tabControl.winfo_children()[2:]
-        for tab in text_tabs:
-            idx = text_tabs.index(tab)
-            text_name = texts[idx]
+        self.texts = ["central_text", "text_plus_1", "text_plus_2", "text_minus_1", "text_minus_2"]
+        self.text_tabs = tabControl.winfo_children()[2:]
+        for tab in self.text_tabs:
+            idx = self.text_tabs.index(tab)
+            text_name = self.texts[idx]
             opt_frame = Frame(tab)
             opt_frame.config(height=100)
             opt_frame.pack(expand=1, fill="both", padx=10, pady=10)
             font_frame = Frame(opt_frame)
-            lbl_font = Label(opt_frame, text="Font:").grid(column=0, row=0, sticky='E')
-            ent_font = Combobox(opt_frame, values=font.families()).grid(column=1, row=0, columnspan=2, sticky='EW')
-            lbl_size = Label(opt_frame, text="Size:").grid(column=0, row=1, sticky='E')
-            ent_size = Combobox(opt_frame, values=tuple(range(0, 41))).grid(column=1, row=1, columnspan=2, sticky='EW')
-            lbl_style = Label(opt_frame, text="Style:").grid(column=0, row=2, sticky='E')
-            ent_style = Combobox(opt_frame, values = ("normal", "bold", "roman", "italic",
-                                                     "underline", "overstrike")).grid(column=1, row=2, columnspan=2, sticky='EW')
-            lbl_color = Label(opt_frame, text="Color:").grid(column=0, row=3, sticky='E')
-            ent_color = Button(opt_frame, text="Color chooser", command=self.getColor).grid(column=1, row=3, columnspan=2, sticky='EW')
+            lbl_font = Label(opt_frame, text="Font:")
+            lbl_font.grid(column=0, row=0, sticky='E')
+            ent_font = Combobox(opt_frame, values=font.families())
+            ent_font.set(self.win_settings.get(text_name + "_family"))
+            ent_font.grid(column=1, row=0, columnspan=2, sticky='EW')
 
-            lbl_pos = Label(opt_frame, text="Position:").grid(column=3, row=0, )
-            ent_pos = Scale(opt_frame, orient=VERTICAL).grid(column=3, row=1, rowspan=4)
+            lbl_size = Label(opt_frame, text="Size:")
+            lbl_size.grid(column=0, row=1, sticky='E')
+            ent_size = Combobox(opt_frame, values=tuple(range(0, 41)))
+            ent_size.set(self.win_settings.get(text_name + "_size"))
+            ent_size.grid(column=1, row=1, columnspan=2, sticky='EW')
+
+            lbl_style = Label(opt_frame, text="Style:")
+            lbl_style.grid(column=0, row=2, sticky='E')
+            ent_style = Combobox(opt_frame, values = ("normal", "bold", "roman", "italic", "underline", "overstrike"))
+            ent_style.set(self.win_settings.get(text_name +"_style"))
+            ent_style.grid(column=1, row=2, columnspan=2, sticky='EW')
+
+            lbl_color = Label(opt_frame, text="Color:").grid(column=0, row=3, sticky='E')
+            lbl_cur_col = Label(opt_frame, text=self.win_settings.get(text_name +"_color"))
+            lbl_cur_col.grid(column=1, row=3, sticky='EW')
+            ent_color = Button(opt_frame, text="Color chooser", command=self.getColor)
+            ent_color.grid(column=2, row=3, sticky='EW')
+
+            lbl_pos = Label(opt_frame, text="Position:")
+            lbl_pos.grid(column=3, row=0, )
+            tab.ent_pos = Scale(opt_frame, orient=VERTICAL, value=self.win_settings.get(text_name +"_position"), from_=1, to=0)
+            tab.ent_pos.grid(column=3, row=1, rowspan=4)
+
             opt_frame.columnconfigure(3, minsize=100)
 
             # Add some space around each label
@@ -378,6 +397,18 @@ class OptionsWindow():
         color = askcolor(parent=self.opt_win)
         print(color[1])
         return color[1]
+
+    def save_and_apply_settings(self):
+        for tab in self.text_tabs:
+            idx = self.text_tabs.index(tab)
+            text_name = self.texts[idx]
+            # position
+            if text_name != "central_text":
+                self.win_settings.update({text_name+'_position': tab.ent_pos.get()})
+        self.app.save_and_apply_settings(timer_window_settings=self.win_settings)
+
+    def get_defaults(self):
+        self.app.get_default_settings()
 
 
 

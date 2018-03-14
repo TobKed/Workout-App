@@ -16,8 +16,8 @@ class WorkoutApp:
         self.root = Tk()
         self.model = Workout()
         self.settings_ = initial_settings
-        self.view = Timer(self.root, inital_settings=self.settings_.timer_window_settings)
-        self.settings_window = OptionsWindow(self.root, self.settings_)
+        self.view = Timer(master=self.root, inital_settings=self.settings_.timer_window_settings)
+        self.settings_window = OptionsWindow(app=self, master=self.root, settings_obj=self.settings_)
         self.root.bind('<space>', self.get_next_ex)
         self.root.bind('<Configure>', self.scale_window)
 
@@ -45,6 +45,15 @@ class WorkoutApp:
     def scale_window(self, e):
         settings_ = Settings(SETTINGS_USER)
         self.view.scale_timer(settings_.timer_window_settings)
+
+    def save_and_apply_settings(self, timer_window_settings, filename=SETTINGS_USER):
+        if timer_window_settings: Settings(SETTINGS_USER).timer_window_settings = timer_window_settings
+        self.settings_.save_config(filename=filename)
+        e=None
+        self.scale_window(e)
+
+    def get_default_settings(self):
+        sets = Settings(SETTINGS_DEFAULT)
 
     def start_countdown(self):
         current_ex_time = int(self.current_ex.get("time", 0))
