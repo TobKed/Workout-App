@@ -347,10 +347,6 @@ class OptionsWindow():
                                             onvalue=True, offvalue=False, command=self.save_and_apply_settings)
         self.btn_rem_last_dir.grid(column=0, row=0)
 
-
-
-
-
         self.texts = ["central_text", "text_plus_1", "text_plus_2", "text_minus_1", "text_minus_2"]
         self.text_tabs = self.tabControl.winfo_children()[2:]
         for tab in self.text_tabs:
@@ -423,6 +419,3 @@ class OptionsWindow():
 
     def get_defaults(self):
         self.app.get_default_settings()
-
-
-

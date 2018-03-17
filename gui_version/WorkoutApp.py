@@ -55,7 +55,7 @@ class WorkoutApp:
             self.settings_.save_config(filename=filename)
         e=None
         self.scale_window(e)
-        print('Settings saved. Filename:', filename)
+        print('Settings saved. Filename: ', filename)
 
     def get_default_settings(self):
         sets = Settings(SETTINGS_DEFAULT)
