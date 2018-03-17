@@ -46,11 +46,16 @@ class WorkoutApp:
         settings_ = Settings(SETTINGS_USER)
         self.view.scale_timer(settings_.timer_window_settings)
 
-    def save_and_apply_settings(self, timer_window_settings, filename=SETTINGS_USER):
-        if timer_window_settings: Settings(SETTINGS_USER).timer_window_settings = timer_window_settings
-        self.settings_.save_config(filename=filename)
+    def save_and_apply_settings(self, timer_window_settings, remember_last_directory=None, filename=SETTINGS_USER):
+        if timer_window_settings:
+            Settings(SETTINGS_USER).timer_window_settings = timer_window_settings
+            self.settings_.save_config(filename=filename)
+        if remember_last_directory is not None:
+            Settings(SETTINGS_USER).remember_last_directory = remember_last_directory
+            self.settings_.save_config(filename=filename)
         e=None
         self.scale_window(e)
+        print('Settings saved. Filename:', filename)
 
     def get_default_settings(self):
         sets = Settings(SETTINGS_DEFAULT)

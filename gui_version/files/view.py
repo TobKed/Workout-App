@@ -306,27 +306,29 @@ class OptionsWindow():
         self.opt_win = Toplevel(master)
         self.master = master
         self.win_settings = getattr(settings_obj, 'timer_window_settings', None)
+        self.rem_last_dir = getattr(settings_obj, 'remember_last_directory', None)
+
         # self.opt_win.geometry("{0}x{0}".format(200, 200))
         self.opt_win.title("Options")
         self.opt_win.resizable(0, 0)
 
         # Tab Control / Notebook
-        tabControl = Notebook(self.opt_win)
-        self.tab1 = Frame(tabControl)
-        tabControl.add(self.tab1, text='general')
-        self.tab2 = Frame(tabControl)
-        tabControl.add(self.tab2, text='main window')
-        self.tab3 = Frame(tabControl)
-        tabControl.add(self.tab3, text='central text')
-        self.tab4 = Frame(tabControl)
-        tabControl.add(self.tab4, text='exercise name text')
-        self.tab5 = Frame(tabControl)
-        tabControl.add(self.tab5, text='repetitions text')
-        self.tab6 = Frame(tabControl)
-        tabControl.add(self.tab6, text='next exercise text')
-        self.tab7 = Frame(tabControl)
-        tabControl.add(self.tab7, text='info text')
-        tabControl.pack(expand=1, fill="both")
+        self.tabControl = Notebook(self.opt_win)
+        self.tab1 = Frame(self.tabControl)
+        self.tabControl.add(self.tab1, text='general')
+        self.tab2 = Frame(self.tabControl)
+        self.tabControl.add(self.tab2, text='main window')
+        self.tab3 = Frame(self.tabControl)
+        self.tabControl.add(self.tab3, text='central text')
+        self.tab4 = Frame(self.tabControl)
+        self.tabControl.add(self.tab4, text='exercise name text')
+        self.tab5 = Frame(self.tabControl)
+        self.tabControl.add(self.tab5, text='repetitions text')
+        self.tab6 = Frame(self.tabControl)
+        self.tabControl.add(self.tab6, text='next exercise text')
+        self.tab7 = Frame(self.tabControl)
+        self.tabControl.add(self.tab7, text='info text')
+        self.tabControl.pack(expand=1, fill="both")
 
         # control buttons
         self.control_buttons_frame = Frame(self.opt_win)
@@ -338,63 +340,73 @@ class OptionsWindow():
             tmp.pack(side=LEFT)
         self.control_buttons_frame.pack(side=RIGHT)
 
+        # save last dir
+        self.var_rem_last_dir = BooleanVar()
+        self.var_rem_last_dir.set(self.rem_last_dir)
+        self.btn_rem_last_dir = Checkbutton(self.tab1, text='Remember last directory', variable=self.var_rem_last_dir,
+                                            onvalue=True, offvalue=False, command=self.save_and_apply_settings)
+        self.btn_rem_last_dir.grid(column=0, row=0)
+
+
 
 
 
         self.texts = ["central_text", "text_plus_1", "text_plus_2", "text_minus_1", "text_minus_2"]
-        self.text_tabs = tabControl.winfo_children()[2:]
+        self.text_tabs = self.tabControl.winfo_children()[2:]
         for tab in self.text_tabs:
             idx = self.text_tabs.index(tab)
+            tab.idx = idx
             text_name = self.texts[idx]
-            opt_frame = Frame(tab)
-            opt_frame.config(height=100)
-            opt_frame.pack(expand=1, fill="both", padx=10, pady=10)
+            tab.opt_frame = Frame(tab)
+            tab.opt_frame.config(height=100)
+            tab.opt_frame.pack(expand=1, fill="both", padx=10, pady=10)
 
-            lbl_font = Label(opt_frame, text="Font:")
+            lbl_font = Label(tab.opt_frame, text="Font:")
             lbl_font.grid(column=0, row=0, sticky='E')
-            tab.ent_font = Combobox(opt_frame, values=font.families())
+            tab.ent_font = Combobox(tab.opt_frame, values=font.families())
             tab.ent_font.set(self.win_settings.get(text_name + "_family"))
             tab.ent_font.grid(column=1, row=0, columnspan=2, sticky='EW')
             tab.ent_font.bind('<<ComboboxSelected>>', self.save_and_apply_settings)
 
-            lbl_size = Label(opt_frame, text="Size:")
+            lbl_size = Label(tab.opt_frame, text="Size:")
             lbl_size.grid(column=0, row=1, sticky='E')
-            tab.ent_size = Combobox(opt_frame, values=tuple(range(0, 41)))
+            tab.ent_size = Combobox(tab.opt_frame, values=tuple(range(0, 41)))
             tab.ent_size.set(self.win_settings.get(text_name + "_size"))
             tab.ent_size.grid(column=1, row=1, columnspan=2, sticky='EW')
             tab.ent_size.bind('<<ComboboxSelected>>', self.save_and_apply_settings)
 
-            lbl_style = Label(opt_frame, text="Style:")
+            lbl_style = Label(tab.opt_frame, text="Style:")
             lbl_style.grid(column=0, row=2, sticky='E')
-            tab.ent_style = Combobox(opt_frame, values = ("normal", "bold", "roman", "italic", "underline", "overstrike"))
+            tab.ent_style = Combobox(tab.opt_frame, values = ("normal", "bold", "roman", "italic", "underline", "overstrike"))
             tab.ent_style.set(self.win_settings.get(text_name +"_style"))
             tab.ent_style.grid(column=1, row=2, columnspan=2, sticky='EW')
             tab.ent_style.bind('<<ComboboxSelected>>', self.save_and_apply_settings)
 
-            tab.lbl_color = Label(opt_frame, text="Color:").grid(column=0, row=3, sticky='E')
+            tab.lbl_color = Label(tab.opt_frame, text="Color:").grid(column=0, row=3, sticky='E')
             tab.cur_color = text=self.win_settings.get(text_name +"_color")
-            tab.lbl_cur_col = Label(opt_frame, text=tab.cur_color)
-            tab.lbl_cur_col.grid(column=1, row=3, sticky='EW')
-            tab.ent_color = Button(opt_frame, text="Color chooser", command= lambda: self.getColor(tab))
-            tab.ent_color.grid(column=2, row=3, sticky='EW')
+            # tab.lbl_cur_col = Label(tab.opt_frame, text=tab.cur_color)
+            # tab.lbl_cur_col.grid(column=1, row=3, sticky='EW')
+            tab.ent_color = Button(tab.opt_frame, text="Color chooser", command=self.getColor)
+            tab.ent_color.grid(column=1, row=3, columnspan=2, sticky='EW')
 
-            lbl_pos = Label(opt_frame, text="Position:")
+            lbl_pos = Label(tab.opt_frame, text="Position:")
             lbl_pos.grid(column=3, row=0, )
-            tab.ent_pos = Scale(opt_frame, orient=VERTICAL, value=self.win_settings.get(text_name +"_position"),
+            tab.ent_pos = Scale(tab.opt_frame, orient=VERTICAL, value=self.win_settings.get(text_name +"_position"),
                                 from_=1, to=0, command=self.save_and_apply_settings)
             tab.ent_pos.grid(column=3, row=1, rowspan=4)
 
-            opt_frame.columnconfigure(3, minsize=100)
+            tab.opt_frame.columnconfigure(3, minsize=100)
 
             # Add some space around each label
-            for child in opt_frame.winfo_children():
+            for child in tab.opt_frame.winfo_children():
                 child.grid_configure(padx=4, pady=2)
 
-    def getColor(self, tab):
+    def getColor(self):
+        idx = self.tabControl.index(self.tabControl.select())
         color = askcolor(parent=self.opt_win)
-        tab.cur_color = color[1]
-        tab.lbl_cur_col.config(text=str(color[1]))
-        print(tab.lbl_cur_col['text'])
+        print(idx, color[1])
+        if idx > 1:
+            self.win_settings.update({self.texts[idx-2] + '_color': color[1]})
         self.save_and_apply_settings()
 
     def save_and_apply_settings(self, e=None):
@@ -404,9 +416,10 @@ class OptionsWindow():
             self.win_settings.update({text_name + '_family': tab.ent_font.get()})
             self.win_settings.update({text_name + '_size': tab.ent_size.get()})
             self.win_settings.update({text_name + '_style': tab.ent_style.get()})
-            self.win_settings.update({text_name + '_color': tab.cur_color})
+            # self.win_settings.update({text_name + '_color': tab.cur_color})
             self.win_settings.update({text_name + '_position': tab.ent_pos.get()})
-        self.app.save_and_apply_settings(timer_window_settings=self.win_settings)
+        self.app.save_and_apply_settings(timer_window_settings=self.win_settings,
+                                         remember_last_directory=self.var_rem_last_dir.get())
 
     def get_defaults(self):
         self.app.get_default_settings()
